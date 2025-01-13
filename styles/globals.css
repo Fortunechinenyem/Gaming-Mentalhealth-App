@@ -1,0 +1,41 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+body,
+html {
+  scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+  background: #fafafa;
+  color: #525050;
+  overflow-x: hidden;
+  font-family: sans-serif;
+  font-weight: var(--fw-reg);
+}
+:root {
+  --ff-primary: "Arial, Helvetica, sans-serif";
+  --ff-secondary: "Merriweather", serif;
+
+  --fw-reg: 500;
+  --fw-bold: 700;
+}
+
+h1,
+h2,
+h4,
+h3,
+h5,
+h6,
+p,
+span,
+a {
+  font-family: sans-serif;
+}
