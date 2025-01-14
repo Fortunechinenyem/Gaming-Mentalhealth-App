@@ -1,8 +1,11 @@
-export default function Mood() {
+import MoodTracker from "@/app/components/MoodTracker";
+
+export default function MoodPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold">Mood Tracker</h1>
-      <p>Track your mood and reflect on your feelings.</p>
+    <div className="min-h-screen bg-purple-50 flex items-center justify-center">
+      <div className="max-w-md w-full">
+        <MoodTracker />
+      </div>
     </div>
   );
 }

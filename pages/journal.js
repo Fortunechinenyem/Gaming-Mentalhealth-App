@@ -1,8 +1,11 @@
-export default function Journal() {
+import JournalEntry from "@/app/components/JournalEntry";
+
+export default function JournalPage() {
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold">Journal</h1>
-      <p>Start your guided journaling journey here.</p>
+    <div className="min-h-screen bg-blue-50 flex items-center justify-center">
+      <div className="max-w-md w-full">
+        <JournalEntry />
+      </div>
     </div>
   );
 }
