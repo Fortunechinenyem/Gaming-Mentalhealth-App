@@ -17,10 +17,10 @@ export default function Home() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-blue-100 p-6">
+    <div className="min-h-screen bg-gray-300 p-6">
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold text-blue-600">
+          <h1 className="text-3xl font-bold text-blue-600">
             Welcome Back, {user.email}!
           </h1>
           <p className="text-lg text-gray-700 mt-2">
@@ -32,7 +32,7 @@ export default function Home() {
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-9">
           <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
             <h2 className="text-xl font-semibold text-blue-500 mb-2">
-              📝 Guided Journaling
+              Guided Journaling
             </h2>
             <p className="text-gray-600 text-center mb-4">
               Write down your thoughts and feelings in a guided format to gain
@@ -45,7 +45,7 @@ export default function Home() {
 
           <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
             <h2 className="text-xl font-semibold text-green-500 mb-2">
-              📊 Mood Tracking
+              Mood Tracking
             </h2>
             <p className="text-gray-600 text-center mb-4">
               Track your daily mood to identify patterns and improve your
@@ -58,7 +58,7 @@ export default function Home() {
 
           <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
             <h2 className="text-xl font-semibold text-yellow-500 mb-2">
-              🏆 Daily Challenges
+              Daily Challenges
             </h2>
             <p className="text-gray-600 text-center mb-4">
               Complete fun and uplifting challenges to stay motivated every day.
@@ -70,7 +70,7 @@ export default function Home() {
         </section>
 
         <section className="mt-12 bg-blue-500 text-white rounded-lg p-6 text-center">
-          <h2 className="text-2xl font-semibold mb-4">🌟 Daily Inspiration</h2>
+          <h2 className="text-2xl font-semibold mb-4">Daily Inspiration</h2>
           <p className="text-lg italic">
             "Mental health is not a destination, but a process. It's about how
             you drive, not where you're going." – Noam Shpancer
@@ -79,7 +79,7 @@ export default function Home() {
 
         <section className="mt-12">
           <h2 className="text-2xl font-semibold text-blue-600 text-center mb-4">
-            🎉 Your Rewards
+            Your Rewards
           </h2>
           <div className="bg-white shadow-md rounded-lg p-6">
             <p className="text-gray-700">
