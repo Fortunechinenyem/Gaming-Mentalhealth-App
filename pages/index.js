@@ -2,9 +2,10 @@ import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import Footer from "@/app/components/Footer";
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -12,6 +13,11 @@ export default function Home() {
       router.push("/login");
     }
   }, [user, loading, router]);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
 
   if (loading) return <p className="text-center mt-10">Loading...</p>;
   if (!user) return null;
@@ -27,6 +33,12 @@ export default function Home() {
             Your mental health journey starts here. Let's grow, reflect, and
             thrive together.
           </p>
+          <button
+            onClick={handleLogout}
+            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            Logout
+          </button>
         </header>
 
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-9">
@@ -94,7 +106,48 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <section className="mt-12 bg-green-500 text-white rounded-lg p-6">
+          <h2 className="text-2xl font-semibold mb-4">Latest Notifications</h2>
+          <ul className="list-disc list-inside text-lg">
+            <li> New challenges are available! Check them out now.</li>
+            <li>
+              You've unlocked a special reward for completing 10 challenges.
+            </li>
+            <li> App update: Improved performance and new features!</li>
+          </ul>
+        </section>
+        <section className="mt-12 bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-2xl font-semibold text-blue-600 text-center mb-4">
+            Your Activity Overview
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            <div>
+              <h3 className="text-xl font-bold text-blue-500">10</h3>
+              <p className="text-gray-600">Journal Entries</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-green-500">8</h3>
+              <p className="text-gray-600">Challenges Completed</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-yellow-500">4.5/5</h3>
+              <p className="text-gray-600">Mood Trend</p>
+            </div>
+          </div>
+        </section>
+        <section className="mt-12 bg-indigo-500 text-white rounded-lg p-6">
+          <h2 className="text-2xl font-semibold mb-4">Recommended For You</h2>
+          <p className="text-lg">
+            Based on your recent activity:
+            <ul className="list-disc list-inside mt-2">
+              <li>Write a new journal entry today.</li>
+              <li>Complete the "5-Minute Breathing Exercise" challenge.</li>
+              <li>Track your mood to maintain consistency.</li>
+            </ul>
+          </p>
+        </section>
       </div>
+      <Footer />
     </div>
   );
 }
