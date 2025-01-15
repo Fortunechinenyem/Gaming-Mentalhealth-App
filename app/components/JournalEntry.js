@@ -8,10 +8,16 @@ import { useAuth } from "@/context/AuthContext";
 export default function JournalEntry() {
   const [entry, setEntry] = useState("");
   const [message, setMessage] = useState("");
-  const { user } = useAuth();
-
   const handleSave = async () => {
-    if (!entry.trim()) return setMessage("Please write something!");
+    if (!user) {
+      setMessage("You must be logged in to save a journal entry.");
+      return;
+    }
+
+    if (!entry.trim()) {
+      setMessage("Please write something!");
+      return;
+    }
 
     try {
       await addDoc(collection(db, "journals"), {
@@ -25,6 +31,7 @@ export default function JournalEntry() {
       setMessage("Error saving journal: " + err.message);
     }
   };
+  const { user } = useAuth();
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-md">
