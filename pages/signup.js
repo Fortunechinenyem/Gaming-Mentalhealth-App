@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { registerUser } from "../firebase";
+import { updateProfile } from "firebase/auth";
 import { useRouter } from "next/router";
 import { addUserToFirestore } from "../utils/firestore";
 
 import Link from "next/link";
+import { registerUser } from "@/firebase";
 
 export default function Signup() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -15,16 +17,19 @@ export default function Signup() {
     e.preventDefault();
     setError("");
     try {
-      const userCredential = await registerUser(email, password);
+      const userCredential = await registerUser(email, password, name); // Pass name, email, and password
       const user = userCredential.user;
 
       await addUserToFirestore(user);
+      await updateProfile(user, {
+        displayName: name,
+      });
 
       console.log("User successfully signed up and added to Firestore!");
     } catch (error) {
       console.error("Error during sign-up:", error.message);
+      setError(error.message);
     }
-
     router.push("/");
   };
 
@@ -45,6 +50,23 @@ export default function Signup() {
         )}
 
         <form onSubmit={handleSignup} className="space-y-6">
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-gray-700 font-medium mb-1"
+            >
+              Name
+            </label>
+            <input
+              type="name"
+              id="name"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
           <div>
             <label
               htmlFor="email"

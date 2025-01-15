@@ -27,7 +27,7 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-8">
           <h1 className="text-3xl font-bold text-blue-600">
-            Welcome Back, {user.email}!
+            Welcome Back, {user.displayName || "User"}!
           </h1>
           <p className="text-lg text-gray-700 mt-2">
             Your mental health journey starts here. Let's grow, reflect, and
@@ -137,14 +137,14 @@ export default function Home() {
         </section>
         <section className="mt-12 bg-indigo-500 text-white rounded-lg p-6">
           <h2 className="text-2xl font-semibold mb-4">Recommended For You</h2>
-          <p className="text-lg">
+          <div className="text-lg">
             Based on your recent activity:
             <ul className="list-disc list-inside mt-2">
               <li>Write a new journal entry today.</li>
               <li>Complete the "5-Minute Breathing Exercise" challenge.</li>
               <li>Track your mood to maintain consistency.</li>
             </ul>
-          </p>
+          </div>
         </section>
       </div>
       <Footer />

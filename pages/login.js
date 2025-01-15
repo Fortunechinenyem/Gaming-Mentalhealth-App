@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { loginUser } from "../firebase";
 import { useRouter } from "next/router";
-import { addUserToFirestore } from "../utils/firestore";
 import Link from "next/link";
 
 export default function Login() {
@@ -13,15 +12,16 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
       const userCredential = await loginUser(email, password);
       const user = userCredential.user;
 
-      await addUserToFirestore(user);
-
+      console.log("User successfully logged in:", user);
       router.push("/");
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      console.error("Error during login:", error.message);
+      setError(error.message);
     }
   };
 
