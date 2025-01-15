@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { loginUser } from "../firebase";
 import { useRouter } from "next/router";
+import { addUserToFirestore } from "../utils/firestore";
 import Link from "next/link";
 
 export default function Login() {
@@ -13,7 +14,11 @@ export default function Login() {
     e.preventDefault();
     setError("");
     try {
-      await loginUser(email, password);
+      const userCredential = await loginUser(email, password);
+      const user = userCredential.user;
+
+      await addUserToFirestore(user);
+
       router.push("/");
     } catch (err) {
       setError(err.message);
