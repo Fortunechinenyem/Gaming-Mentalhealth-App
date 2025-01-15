@@ -8,6 +8,10 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null"
+  },
   "dependencies": {
     "firebase": "^11.1.0",
     "next": "15.1.4",

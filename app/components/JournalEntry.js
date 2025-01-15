@@ -1,13 +1,31 @@
 import { useState } from "react";
-
-import { collection, addDoc, Timestamp } from "firebase/firestore";
-
+import {
+  collection,
+  addDoc,
+  Timestamp,
+  doc,
+  updateDoc,
+  increment,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 
 export default function JournalEntry() {
   const [entry, setEntry] = useState("");
   const [message, setMessage] = useState("");
+  const { user } = useAuth();
+
+  const updatePoints = async (userId, points) => {
+    const rewardDocRef = doc(db, "rewards", userId);
+    try {
+      await updateDoc(rewardDocRef, {
+        points: increment(points),
+      });
+    } catch (err) {
+      console.error("Error updating points: ", err.message);
+    }
+  };
+
   const handleSave = async () => {
     if (!user) {
       setMessage("You must be logged in to save a journal entry.");
@@ -25,13 +43,15 @@ export default function JournalEntry() {
         entry,
         createdAt: Timestamp.now(),
       });
+
+      await updatePoints(user.uid, 10);
+
       setEntry("");
-      setMessage("Journal saved successfully!");
+      setMessage("Journal saved successfully! You've earned 10 points!");
     } catch (err) {
       setMessage("Error saving journal: " + err.message);
     }
   };
-  const { user } = useAuth();
 
   return (
     <div className="p-6 bg-white shadow-lg rounded-md">

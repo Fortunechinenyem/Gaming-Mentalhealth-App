@@ -1,16 +1,32 @@
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/firebase";
 import Footer from "@/app/components/Footer";
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
+  const [rewards, setRewards] = useState({ points: 0, level: 1, badges: [] });
 
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
+    }
+
+    if (user) {
+      const fetchRewards = async () => {
+        const rewardDocRef = doc(db, "rewards", user.uid);
+        const rewardSnapshot = await getDoc(rewardDocRef);
+        if (rewardSnapshot.exists()) {
+          setRewards(rewardSnapshot.data());
+        } else {
+          setRewards({ points: 0, level: 1, badges: [] }); // Default rewards for new users
+        }
+      };
+      fetchRewards();
     }
   }, [user, loading, router]);
 
@@ -81,70 +97,40 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="mt-12">
+          <div className="p-6 bg-white shadow-md rounded-md">
+            <h2 className="text-xl font-bold mb-4">Your Rewards</h2>
+            <p>
+              Points:{" "}
+              <span className="text-blue-500 font-bold">{rewards.points}</span>
+            </p>
+            <p>
+              Level:{" "}
+              <span className="text-green-500 font-bold">{rewards.level}</span>
+            </p>
+            <div className="mt-4">
+              <h3 className="font-semibold mb-2">Badges:</h3>
+              <ul className="flex space-x-2">
+                {rewards.badges.length > 0 ? (
+                  rewards.badges.map((badge, index) => (
+                    <li key={index} className="bg-gray-100 p-2 rounded text-sm">
+                      {badge}
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-gray-500 italic">No badges yet</li>
+                )}
+              </ul>
+            </div>
+          </div>
+        </section>
+
         <section className="mt-12 bg-blue-500 text-white rounded-lg p-6 text-center">
           <h2 className="text-2xl font-semibold mb-4">Daily Inspiration</h2>
           <p className="text-lg italic">
             "Mental health is not a destination, but a process. It's about how
             you drive, not where you're going." – Noam Shpancer
           </p>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-semibold text-blue-600 text-center mb-4">
-            Your Rewards
-          </h2>
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <p className="text-gray-700">
-              You've earned{" "}
-              <span className="font-bold text-blue-500">150 points</span> this
-              week! Keep completing challenges to unlock exciting rewards.
-            </p>
-            <div className="mt-4 text-center">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Redeem Rewards
-              </button>
-            </div>
-          </div>
-        </section>
-        <section className="mt-12 bg-green-500 text-white rounded-lg p-6">
-          <h2 className="text-2xl font-semibold mb-4">Latest Notifications</h2>
-          <ul className="list-disc list-inside text-lg">
-            <li> New challenges are available! Check them out now.</li>
-            <li>
-              You've unlocked a special reward for completing 10 challenges.
-            </li>
-            <li> App update: Improved performance and new features!</li>
-          </ul>
-        </section>
-        <section className="mt-12 bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-2xl font-semibold text-blue-600 text-center mb-4">
-            Your Activity Overview
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-            <div>
-              <h3 className="text-xl font-bold text-blue-500">10</h3>
-              <p className="text-gray-600">Journal Entries</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-green-500">8</h3>
-              <p className="text-gray-600">Challenges Completed</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-yellow-500">4.5/5</h3>
-              <p className="text-gray-600">Mood Trend</p>
-            </div>
-          </div>
-        </section>
-        <section className="mt-12 bg-indigo-500 text-white rounded-lg p-6">
-          <h2 className="text-2xl font-semibold mb-4">Recommended For You</h2>
-          <div className="text-lg">
-            Based on your recent activity:
-            <ul className="list-disc list-inside mt-2">
-              <li>Write a new journal entry today.</li>
-              <li>Complete the "5-Minute Breathing Exercise" challenge.</li>
-              <li>Track your mood to maintain consistency.</li>
-            </ul>
-          </div>
         </section>
       </div>
       <Footer />

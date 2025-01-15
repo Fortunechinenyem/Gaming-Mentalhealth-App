@@ -1,16 +1,41 @@
 import { useState } from "react";
-
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, increment } from "firebase/firestore";
 import { db } from "@/firebase";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ChallengeCard({ challenge }) {
   const [completed, setCompleted] = useState(challenge.completed);
+  const { user } = useAuth();
+
+  const updatePoints = async (userId, points) => {
+    const rewardDocRef = doc(db, "rewards", userId);
+    try {
+      await updateDoc(rewardDocRef, {
+        points: increment(points),
+      });
+    } catch (err) {
+      console.error("Error updating points: ", err.message);
+    }
+  };
+
+  const calculateLevel = (points) => {
+    if (points >= 0 && points < 100) return 1;
+    if (points >= 100 && points < 250) return 2;
+    if (points >= 250) return 3;
+    return 0;
+  };
 
   const handleComplete = async () => {
+    if (completed) return;
+
     try {
       await updateDoc(doc(db, "challenges", challenge.id), {
         completed: true,
       });
+
+      const points = challenge.points || 10;
+      await updatePoints(user.uid, points);
+
       setCompleted(true);
     } catch (err) {
       console.error("Error completing challenge: ", err.message);
