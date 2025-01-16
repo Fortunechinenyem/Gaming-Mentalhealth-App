@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { doc, updateDoc, increment } from "firebase/firestore";
-import { db } from "@/firebase";
+
 import { useAuth } from "@/context/AuthContext";
 
 export default function ChallengeCard({ challenge, onComplete }) {

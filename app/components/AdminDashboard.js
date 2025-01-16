@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {
   collection,
   getDocs,
+  addDoc,
   updateDoc,
   doc,
   deleteDoc,
@@ -99,44 +100,92 @@ export default function AdminDashboard() {
       console.error("Error deleting challenge:", err);
     }
   };
+  const handleAddChallenge = async () => {
+    if (
+      !newChallenge.title ||
+      !newChallenge.description ||
+      newChallenge.points <= 0
+    ) {
+      alert("All fields are required and points must be greater than 0.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "challenges"), newChallenge);
+      setChallenges((prevChallenges) => [
+        ...prevChallenges,
+        { ...newChallenge, id: Date.now().toString() },
+      ]);
+      setIsAdding(false);
+      setNewChallenge({ title: "", description: "", points: 0 });
+    } catch (err) {
+      console.error("Error adding challenge:", err);
+    }
+  };
 
   return (
-    <div>
-      <h2 className="text-xl font-bold text-blue-600 mb-4">Admin Dashboard</h2>
-      <div>
-        <div className="mt-7 mb-7">
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h2 className="text-2xl font-semibold text-blue-600 mb-6">
+        Admin Dashboard
+      </h2>
+
+      <div className="bg-white p-4 rounded-lg shadow-md mb-8">
+        <h3 className="text-lg font-semibold mb-4">Assign User Role</h3>
+        <div className="flex items-center space-x-4">
           <input
             type="text"
             placeholder="User ID"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
+            className="px-4 py-2 border rounded-md w-1/3"
           />
-          <select onChange={(e) => setRole(e.target.value)} value={role}>
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="px-4 py-2 border rounded-md w-1/3"
+          >
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
-          <button onClick={handleRoleAssignment}>Assign Role</button>
+          <button
+            onClick={handleRoleAssignment}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
+            Assign Role
+          </button>
         </div>
-        <h3 className="text-lg font-semibold">Challenges</h3>
-        <ul>
+      </div>
+
+      <div className="bg-white p-4 rounded-lg shadow-md mb-8">
+        <h3 className="text-lg font-semibold mb-4">Add New Challenge</h3>
+        <button
+          onClick={() => setIsAdding(true)}
+          className="bg-green-500 text-white px-4 py-2 rounded-md"
+        >
+          Add Challenge
+        </button>
+      </div>
+      <div className="bg-white p-4 rounded-lg shadow-md">
+        <h3 className="text-lg font-semibold mb-4">Challenges</h3>
+        <ul className="space-y-4">
           {challenges.map((challenge) => (
             <li
               key={challenge.id}
-              className="flex justify-between items-center py-2"
+              className="flex justify-between items-center bg-gray-50 p-4 rounded-lg shadow-sm"
             >
               <div>
                 <p className="font-semibold">{challenge.title}</p>
-                <p className="text-sm text-gray-500">{challenge.description}</p>
+                <p className="text-sm text-gray-600">{challenge.description}</p>
               </div>
-              <div>
+              <div className="flex space-x-2">
                 <button
-                  className="bg-blue-500 text-white py-1 px-3 rounded-md"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md"
                   onClick={() => handleEdit(challenge)}
                 >
                   Edit
                 </button>
                 <button
-                  className="bg-red-500 text-white py-1 px-3 rounded-md ml-2"
+                  className="bg-red-500 text-white px-4 py-2 rounded-md"
                   onClick={() => handleDelete(challenge.id)}
                 >
                   Delete
@@ -148,10 +197,10 @@ export default function AdminDashboard() {
       </div>
 
       {isEditing && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md">
-            <h3 className="text-xl font-semibold">Edit Challenge</h3>
-            <div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4">Edit Challenge</h3>
+            <div className="space-y-4">
               <input
                 type="text"
                 placeholder="Title"
@@ -159,7 +208,7 @@ export default function AdminDashboard() {
                 onChange={(e) =>
                   setNewChallenge({ ...newChallenge, title: e.target.value })
                 }
-                className="mt-2 p-2 w-full border rounded-md"
+                className="w-full px-4 py-2 border rounded-md"
               />
               <textarea
                 placeholder="Description"
@@ -170,7 +219,7 @@ export default function AdminDashboard() {
                     description: e.target.value,
                   })
                 }
-                className="mt-2 p-2 w-full border rounded-md"
+                className="w-full px-4 py-2 border rounded-md"
               />
               <input
                 type="number"
@@ -179,21 +228,21 @@ export default function AdminDashboard() {
                 onChange={(e) =>
                   setNewChallenge({ ...newChallenge, points: e.target.value })
                 }
-                className="mt-2 p-2 w-full border rounded-md"
+                className="w-full px-4 py-2 border rounded-md"
               />
             </div>
-            <div className="mt-4 flex justify-end space-x-2">
+            <div className="mt-6 flex justify-end space-x-4">
               <button
-                className="bg-gray-500 text-white py-1 px-3 rounded-md"
+                className="bg-gray-500 text-white px-4 py-2 rounded-md"
                 onClick={() => setIsEditing(false)}
               >
                 Cancel
               </button>
               <button
-                className="bg-green-500 text-white py-1 px-3 rounded-md"
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
                 onClick={handleSaveEdit}
               >
-                Save
+                Save Changes
               </button>
             </div>
           </div>
