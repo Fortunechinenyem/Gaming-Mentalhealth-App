@@ -1,19 +1,31 @@
 This is a Gaming mental health application created with next js
 
-## Getting Started
+Mental Health AppDevelopment Phases
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Set up the Next.js or React Native environment.
+Integrate Tailwind CSS for styling.
+Configure Firebase for authentication and database.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Core Features
 
-.
+Journaling:
+Build a journal entry form with guided prompts.
+Store entries in Firestore under the journals collection.
+Mood Tracking:
+Create a mood tracker UI with selectable emojis or sliders.
+Save mood logs in the moods collection.
+Daily Challenges:
+Fetch challenges from the challenges collection.
+Mark tasks as completed and assign rewards.
+
+## Reward System
+
+Add a points system for task completions.
+Display badges or levels based on milestones.
+Store rewards in the rewards collection.
+
+## Notifications
+
+Use Firebase Cloud Messaging to send reminders for journaling, mood tracking, and daily challenges.
