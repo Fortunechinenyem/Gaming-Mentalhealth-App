@@ -23,7 +23,7 @@ export default function Home() {
         if (rewardSnapshot.exists()) {
           setRewards(rewardSnapshot.data());
         } else {
-          setRewards({ points: 0, level: 1, badges: [] }); // Default rewards for new users
+          setRewards({ points: 0, level: 1, badges: [] });
         }
       };
       fetchRewards();

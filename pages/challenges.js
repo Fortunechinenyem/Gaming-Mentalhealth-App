@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import ChallengeCard from "@/app/components/ChallengeCard";
+import Navbar from "@/app/components/Navbar";
 
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
@@ -40,24 +41,27 @@ export default function DailyChallenges() {
   };
 
   return (
-    <div className="bg-green-50 p-6 rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold text-green-600 mb-4">
-        Daily Challenges
-      </h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      {challenges.length === 0 ? (
-        <p className="text-gray-500">No challenges available.</p>
-      ) : (
-        <ul className="space-y-4">
-          {challenges.map((challenge) => (
-            <ChallengeCard
-              key={challenge.id}
-              challenge={challenge}
-              onComplete={handleComplete}
-            />
-          ))}
-        </ul>
-      )}
+    <div>
+      <Navbar />
+      <div className="bg-green-50 p-6 rounded-lg shadow-lg">
+        <h2 className="text-xl font-bold text-green-600 mb-4">
+          Daily Challenges
+        </h2>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {challenges.length === 0 ? (
+          <p className="text-gray-500">No challenges available.</p>
+        ) : (
+          <ul className="space-y-4">
+            {challenges.map((challenge) => (
+              <ChallengeCard
+                key={challenge.id}
+                challenge={challenge}
+                onComplete={handleComplete}
+              />
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
