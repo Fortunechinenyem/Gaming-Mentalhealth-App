@@ -1,9 +1,9 @@
-import MoodTracker from "@/app/components/MoodTracker";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import Navbar from "@/app/components/Navbar";
+import MoodTracker from "@/app/components/MoodTracker";
 
 export default function MoodPage() {
   const { user } = useAuth();
@@ -16,14 +16,19 @@ export default function MoodPage() {
     const fetchMoodHistory = async () => {
       if (user) {
         try {
-          const docRef = doc(db, "moods", user.uid); // Adjust collection name as needed
-          const docSnap = await getDoc(docRef);
+          const moodsRef = collection(db, "moods");
+          const querySnapshot = await getDocs(
+            query(moodsRef, where("userId", "==", user.uid))
+          );
 
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            const history = data.history || [];
-            setMoodHistory(history);
-            setLatestMood(history[history.length - 1]?.mood || "");
+          if (!querySnapshot.empty) {
+            const history = querySnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+
+            setMoodHistory(history.sort((a, b) => b.createdAt - a.createdAt)); // Sort by most recent
+            setLatestMood(history[0]?.mood || "");
           } else {
             console.warn("No mood data found for the user.");
           }
@@ -42,14 +47,15 @@ export default function MoodPage() {
   }, [user]);
 
   const getEncouragementMessage = (mood) => {
-    const moodDetails = {
-      happy: "Keep smiling! 🌟 You're doing amazing!",
-      sad: "It's okay to feel sad. Tomorrow is a new day! 🌈",
-      neutral: "You're doing great! Stay balanced. 🧘‍♀️",
-      angry: "Take a deep breath. You’ve got this! 💪",
+    const moodMessages = {
+      "😃": "Keep smiling! 🌟 You're doing amazing!",
+      "🙂": "Stay positive, even in small ways! 😊",
+      "😐": "You're doing great! Stay balanced. 🧘‍♀️",
+      "☹️": "It's okay to feel down. Take time for yourself! 💙",
+      "😢": "You’re strong. Brighter days are ahead! 🌈",
     };
 
-    return moodDetails[mood] || "How are you feeling today?";
+    return moodMessages[mood] || "How are you feeling today?";
   };
 
   if (loading) return <p>Loading...</p>;
@@ -89,27 +95,24 @@ export default function MoodPage() {
               <ul className="space-y-2">
                 {moodHistory.map((entry, index) => (
                   <li
-                    key={index}
+                    key={entry.id || index}
                     className="flex justify-between items-center bg-purple-50 p-3 rounded-md shadow-sm"
                   >
                     <span className="text-gray-700">
-                      {new Date(entry.date).toLocaleDateString()} - {entry.mood}
+                      {entry.createdAt?.toDate().toLocaleDateString() ||
+                        "Unknown Date"}{" "}
+                      - {entry.mood}
                     </span>
                     <span
                       className={`text-lg ${
-                        entry.mood === "happy"
+                        entry.mood === "😃"
                           ? "text-green-600"
-                          : entry.mood === "sad"
+                          : entry.mood === "😢"
                           ? "text-blue-600"
-                          : entry.mood === "angry"
-                          ? "text-red-600"
                           : "text-gray-600"
                       }`}
                     >
-                      {entry.mood === "happy" && "😊"}
-                      {entry.mood === "sad" && "😢"}
-                      {entry.mood === "neutral" && "😐"}
-                      {entry.mood === "angry" && "😠"}
+                      {entry.mood}
                     </span>
                   </li>
                 ))}

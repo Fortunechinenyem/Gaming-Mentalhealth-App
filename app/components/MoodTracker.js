@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  collection,
   doc,
   updateDoc,
   increment,
