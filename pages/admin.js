@@ -7,6 +7,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase";
+import { assignUserRole } from "@/utils/roleUtils";
 
 export default function AdminDashboard() {
   const [challenges, setChallenges] = useState([]);
@@ -18,7 +19,18 @@ export default function AdminDashboard() {
   const [editChallenge, setEditChallenge] = useState(null); // Store the challenge being edited
   const [isEditing, setIsEditing] = useState(false); // Track whether we're editing a challenge
 
-  // Fetch challenges on component mount
+  const [role, setRole] = useState("user");
+  const [userId, setUserId] = useState("");
+
+  const handleRoleAssignment = async () => {
+    if (userId && role) {
+      await assignUserRole(userId, role);
+      alert(`Role ${role} assigned to user ${userId}`);
+    } else {
+      alert("Please enter both user ID and role.");
+    }
+  };
+
   useEffect(() => {
     const fetchChallenges = async () => {
       try {
@@ -36,7 +48,6 @@ export default function AdminDashboard() {
     fetchChallenges();
   }, []);
 
-  // Handle challenge editing
   const handleEdit = (challenge) => {
     setEditChallenge(challenge);
     setNewChallenge({
@@ -78,7 +89,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Handle challenge deletion
   const handleDelete = async (id) => {
     try {
       await deleteDoc(doc(db, "challenges", id));
@@ -94,6 +104,19 @@ export default function AdminDashboard() {
     <div>
       <h2 className="text-xl font-bold text-blue-600 mb-4">Admin Dashboard</h2>
       <div>
+        <div className="mt-7 mb-7">
+          <input
+            type="text"
+            placeholder="User ID"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+          />
+          <select onChange={(e) => setRole(e.target.value)} value={role}>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button onClick={handleRoleAssignment}>Assign Role</button>
+        </div>
         <h3 className="text-lg font-semibold">Challenges</h3>
         <ul>
           {challenges.map((challenge) => (
