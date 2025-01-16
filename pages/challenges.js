@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { db } from "../firebase";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import ChallengeCard from "@/app/components/ChallengeCard";
 import Navbar from "@/app/components/Navbar";
+import { db } from "@/firebase";
 
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
@@ -26,10 +26,15 @@ export default function DailyChallenges() {
     fetchChallenges();
   }, []);
 
-  const handleComplete = async (id) => {
+  const handleComplete = async (id, points) => {
     try {
       const challengeRef = doc(db, "challenges", id);
       await updateDoc(challengeRef, { completed: true });
+
+      const userId = "currentUserId";
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { points: increment(points) });
+
       setChallenges((prev) =>
         prev.map((challenge) =>
           challenge.id === id ? { ...challenge, completed: true } : challenge

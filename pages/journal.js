@@ -90,7 +90,7 @@ export default function JournalPage() {
                   >
                     <p className="text-gray-800 text-md">{entry.content}</p>
                     <p className="text-sm text-gray-500 mt-2">
-                      {new Date(entry.date).toLocaleDateString()}
+                      {entry.date.toLocaleDateString()}
                     </p>
                   </li>
                 ))}
