@@ -7,8 +7,8 @@ import Navbar from "@/app/components/Navbar";
 export default function Profile() {
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
-  const [greeting, setGreeting] = useState("Welcome!");
-  const [points, setPoints] = useState(0); // Add points state
+  const [greeting, setGreeting] = useState("Hello!");
+  const [points, setPoints] = useState(0);
 
   useEffect(() => {
     const fetchUserPoints = async () => {
@@ -16,7 +16,7 @@ export default function Profile() {
         const userRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
-          setPoints(docSnap.data().points || 0); // Set points using the new state
+          setPoints(docSnap.data().points || 0);
         }
       }
     };

@@ -38,10 +38,9 @@ export default function JournalEntry() {
     }
 
     try {
-      await addDoc(collection(db, "journals"), {
-        userId: user.uid,
-        entry,
-        createdAt: Timestamp.now(),
+      await addDoc(collection(db, "journals", user.uid, "entries"), {
+        content: entry,
+        date: Timestamp.now(),
       });
 
       await updatePoints(user.uid, 10);

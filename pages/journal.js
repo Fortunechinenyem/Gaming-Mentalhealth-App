@@ -2,7 +2,7 @@ import JournalEntry from "@/app/components/JournalEntry";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { db } from "@/firebase";
-import { collection, getDocs, doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import Navbar from "@/app/components/Navbar";
 
 export default function JournalPage() {
@@ -10,32 +10,53 @@ export default function JournalPage() {
   const [journalEntries, setJournalEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchJournalEntries = async () => {
-      if (user) {
-        try {
-          const journalCollection = collection(
-            db,
-            "journals",
-            user.uid,
-            "entries"
-          );
-          const querySnapshot = await getDocs(journalCollection);
-          const entries = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setJournalEntries(entries);
-        } catch (err) {
-          console.error("Error fetching journal entries:", err.message);
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+  const fetchJournalEntries = async () => {
+    setLoading(true);
+    try {
+      const journalCollection = collection(db, "journals", user.uid, "entries");
+      const querySnapshot = await getDocs(journalCollection);
 
-    fetchJournalEntries();
+      const entries = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          content: data.content,
+          date: data.date.toDate ? data.date.toDate() : new Date(data.date), // Handle both Firestore Timestamps and ISO strings
+        };
+      });
+
+      setJournalEntries(entries);
+    } catch (error) {
+      console.error("Error fetching journal entries: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchJournalEntries();
+    }
   }, [user]);
+
+  const handleSaveEntry = async (entryContent) => {
+    if (user) {
+      const journalCollection = collection(db, "journals", user.uid, "entries");
+
+      const newEntry = {
+        content: entryContent,
+        date: new Date().toISOString(),
+      };
+
+      try {
+        console.log("Saving new entry:", newEntry);
+        await addDoc(journalCollection, newEntry);
+        fetchJournalEntries();
+      } catch (error) {
+        console.error("Error saving journal entry:", error.message);
+      }
+    }
+  };
 
   return (
     <div>
@@ -49,7 +70,7 @@ export default function JournalPage() {
             <p className="text-center text-lg text-gray-700 mb-6">
               Your journal is a space for reflection and self-discovery.
             </p>
-            <JournalEntry />
+            <JournalEntry onSaveEntry={handleSaveEntry} />
           </div>
 
           {loading ? (
