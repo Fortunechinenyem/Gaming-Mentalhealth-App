@@ -37,16 +37,6 @@ export default function JournalPage() {
     fetchJournalEntries();
   }, [user]);
 
-  const addDummyEntry = async () => {
-    if (user) {
-      const entryRef = doc(collection(db, "journals", user.uid, "entries"));
-      await setDoc(entryRef, {
-        content: "This is a sample journal entry!",
-        date: new Date().toISOString(),
-      });
-    }
-  };
-
   return (
     <div>
       <Navbar />
@@ -54,7 +44,7 @@ export default function JournalPage() {
         <div className="max-w-3xl mx-auto">
           <div className="bg-white shadow-lg rounded-lg p-6">
             <h1 className="text-3xl font-bold text-blue-600 text-center mb-4">
-              Hello, {user?.displayName || "User"}! ✍️
+              Hello, {user?.displayName || "User"}!
             </h1>
             <p className="text-center text-lg text-gray-700 mb-6">
               Your journal is a space for reflection and self-discovery.
@@ -90,12 +80,6 @@ export default function JournalPage() {
               <p className="text-gray-600">
                 No journal entries yet. Start writing your first thoughts!
               </p>
-              <button
-                onClick={addDummyEntry}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
-              >
-                Add a Sample Entry (Demo)
-              </button>
             </div>
           )}
         </div>

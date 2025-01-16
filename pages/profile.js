@@ -8,9 +8,22 @@ export default function Profile() {
   const { user } = useAuth();
   const [userData, setUserData] = useState(null);
   const [greeting, setGreeting] = useState("Welcome!");
+  const [points, setPoints] = useState(0); // Add points state
 
   useEffect(() => {
-    // Fetch user data
+    const fetchUserPoints = async () => {
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          setPoints(docSnap.data().points || 0); // Set points using the new state
+        }
+      }
+    };
+    fetchUserPoints();
+  }, [user]);
+
+  useEffect(() => {
     const fetchData = async () => {
       if (user) {
         try {
@@ -58,15 +71,12 @@ export default function Profile() {
                   <div
                     className="absolute top-0 left-0 h-4 bg-blue-500 rounded-md"
                     style={{
-                      width: `${
-                        (userData.points / (userData.level * 100)) * 100 || 0
-                      }%`,
+                      width: `${(points / (userData.level * 100)) * 100 || 0}%`,
                     }}
                   ></div>
                 </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  {userData.points || 0} / {userData.level * 100} points to next
-                  level
+                  {points} / {userData.level * 100} points to next level
                 </p>
               </div>
             </div>

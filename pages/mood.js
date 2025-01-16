@@ -9,6 +9,8 @@ export default function MoodPage() {
   const { user } = useAuth();
   const [moodHistory, setMoodHistory] = useState([]);
   const [latestMood, setLatestMood] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchMoodHistory = async () => {
@@ -19,12 +21,20 @@ export default function MoodPage() {
 
           if (docSnap.exists()) {
             const data = docSnap.data();
-            setMoodHistory(data.history || []);
-            setLatestMood(data.history?.[data.history.length - 1]?.mood || "");
+            const history = data.history || [];
+            setMoodHistory(history);
+            setLatestMood(history[history.length - 1]?.mood || "");
+          } else {
+            console.warn("No mood data found for the user.");
           }
         } catch (err) {
           console.error("Error fetching mood history:", err.message);
+          setError("Failed to load mood data. Please try again later.");
+        } finally {
+          setLoading(false);
         }
+      } else {
+        setLoading(false);
       }
     };
 
@@ -32,13 +42,18 @@ export default function MoodPage() {
   }, [user]);
 
   const getEncouragementMessage = (mood) => {
-    if (mood === "happy") return "Keep smiling! 🌟 You're doing amazing!";
-    if (mood === "sad")
-      return "It's okay to feel sad. Tomorrow is a new day! 🌈";
-    if (mood === "neutral") return "You're doing great! Stay balanced. 🧘‍♀️";
-    if (mood === "angry") return "Take a deep breath. You’ve got this! 💪";
-    return "How are you feeling today?";
+    const moodDetails = {
+      happy: "Keep smiling! 🌟 You're doing amazing!",
+      sad: "It's okay to feel sad. Tomorrow is a new day! 🌈",
+      neutral: "You're doing great! Stay balanced. 🧘‍♀️",
+      angry: "Take a deep breath. You’ve got this! 💪",
+    };
+
+    return moodDetails[mood] || "How are you feeling today?";
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-600">{error}</p>;
 
   return (
     <div>
@@ -69,7 +84,7 @@ export default function MoodPage() {
           {moodHistory.length > 0 && (
             <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
               <h2 className="text-2xl font-bold text-purple-600 text-center mb-4">
-                Your Mood History 📊
+                Your Mood History
               </h2>
               <ul className="space-y-2">
                 {moodHistory.map((entry, index) => (
