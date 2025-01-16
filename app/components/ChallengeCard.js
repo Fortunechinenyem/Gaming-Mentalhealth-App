@@ -3,7 +3,7 @@ import { doc, updateDoc, increment } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 
-export default function ChallengeCard({ challenge }) {
+export default function ChallengeCard({ challenge, onComplete }) {
   const [completed, setCompleted] = useState(challenge.completed);
   const { user } = useAuth();
 
@@ -27,15 +27,8 @@ export default function ChallengeCard({ challenge }) {
 
   const handleComplete = async () => {
     if (completed) return;
-
     try {
-      await updateDoc(doc(db, "challenges", challenge.id), {
-        completed: true,
-      });
-
-      const points = challenge.points || 10;
-      await updatePoints(user.uid, points);
-
+      await onComplete(challenge.id);
       setCompleted(true);
     } catch (err) {
       console.error("Error completing challenge: ", err.message);

@@ -15,6 +15,7 @@ export default function DailyChallenges() {
           id: doc.id,
           ...doc.data(),
         }));
+        console.log("Fetched Challenges: ", challengesData);
         setChallenges(challengesData);
       } catch (err) {
         setError("Failed to fetch challenges.");
@@ -44,15 +45,19 @@ export default function DailyChallenges() {
         Daily Challenges
       </h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
-      <ul className="space-y-4">
-        {challenges.map((challenge) => (
-          <ChallengeCard
-            key={challenge.id}
-            challenge={challenge}
-            onComplete={handleComplete}
-          />
-        ))}
-      </ul>
+      {challenges.length === 0 ? (
+        <p className="text-gray-500">No challenges available.</p>
+      ) : (
+        <ul className="space-y-4">
+          {challenges.map((challenge) => (
+            <ChallengeCard
+              key={challenge.id}
+              challenge={challenge}
+              onComplete={handleComplete}
+            />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
