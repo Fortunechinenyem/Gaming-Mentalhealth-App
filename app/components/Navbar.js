@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
+import { Logo } from "@/public/images";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +18,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
             <Link href="/" className="text-2xl font-bold tracking-wide">
-              Mental Health App
+              <Image src={Logo} alt="logo" width={50} height={50} />
             </Link>
           </div>
 

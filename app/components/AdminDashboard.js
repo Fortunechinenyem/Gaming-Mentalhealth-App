@@ -71,6 +71,16 @@ export default function AdminDashboard() {
       console.error("Error adding challenge:", err);
     }
   };
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "challenges", id));
+      setChallenges((prevChallenges) =>
+        prevChallenges.filter((challenge) => challenge.id !== id)
+      );
+    } catch (err) {
+      console.error("Error deleting challenge:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

@@ -3,6 +3,8 @@ import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 import ChallengeCard from "@/app/components/ChallengeCard";
 import Navbar from "@/app/components/Navbar";
 import { db } from "@/firebase";
+import { getAuth } from "firebase/auth";
+import { increment } from "firebase/firestore";
 
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
@@ -31,7 +33,11 @@ export default function DailyChallenges() {
       const challengeRef = doc(db, "challenges", id);
       await updateDoc(challengeRef, { completed: true });
 
-      const userId = "currentUserId";
+      const userId = getAuth().currentUser?.uid;
+      if (!userId) {
+        setError("User is not authenticated.");
+        return;
+      }
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, { points: increment(points) });
 
