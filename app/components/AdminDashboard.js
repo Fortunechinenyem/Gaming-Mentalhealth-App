@@ -17,8 +17,8 @@ export default function AdminDashboard() {
     description: "",
     points: 0,
   });
-  const [editChallenge, setEditChallenge] = useState(null); // Store the challenge being edited
-  const [isEditing, setIsEditing] = useState(false); // Track whether we're editing a challenge
+  const [editChallenge, setEditChallenge] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [role, setRole] = useState("user");
   const [userId, setUserId] = useState("");
@@ -49,57 +49,6 @@ export default function AdminDashboard() {
     fetchChallenges();
   }, []);
 
-  const handleEdit = (challenge) => {
-    setEditChallenge(challenge);
-    setNewChallenge({
-      title: challenge.title,
-      description: challenge.description,
-      points: challenge.points,
-    });
-    setIsEditing(true);
-  };
-
-  const handleSaveEdit = async () => {
-    if (
-      !newChallenge.title ||
-      !newChallenge.description ||
-      newChallenge.points <= 0
-    ) {
-      alert("All fields are required and points must be greater than 0.");
-      return;
-    }
-
-    try {
-      const challengeRef = doc(db, "challenges", editChallenge.id);
-      await updateDoc(challengeRef, {
-        title: newChallenge.title,
-        description: newChallenge.description,
-        points: newChallenge.points,
-      });
-      setChallenges((prevChallenges) =>
-        prevChallenges.map((challenge) =>
-          challenge.id === editChallenge.id
-            ? { ...challenge, ...newChallenge }
-            : challenge
-        )
-      );
-      setIsEditing(false);
-      setEditChallenge(null);
-    } catch (err) {
-      console.error("Error updating challenge:", err);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "challenges", id));
-      setChallenges((prevChallenges) =>
-        prevChallenges.filter((challenge) => challenge.id !== id)
-      );
-    } catch (err) {
-      console.error("Error deleting challenge:", err);
-    }
-  };
   const handleAddChallenge = async () => {
     if (
       !newChallenge.title ||
@@ -111,13 +60,13 @@ export default function AdminDashboard() {
     }
 
     try {
-      await addDoc(collection(db, "challenges"), newChallenge);
+      const docRef = await addDoc(collection(db, "challenges"), newChallenge);
       setChallenges((prevChallenges) => [
         ...prevChallenges,
-        { ...newChallenge, id: Date.now().toString() },
+        { id: docRef.id, ...newChallenge },
       ]);
-      setIsAdding(false);
       setNewChallenge({ title: "", description: "", points: 0 });
+      alert("Challenge added successfully!");
     } catch (err) {
       console.error("Error adding challenge:", err);
     }
@@ -158,13 +107,45 @@ export default function AdminDashboard() {
 
       <div className="bg-white p-4 rounded-lg shadow-md mb-8">
         <h3 className="text-lg font-semibold mb-4">Add New Challenge</h3>
-        <button
-          onClick={() => setIsAdding(true)}
-          className="bg-green-500 text-white px-4 py-2 rounded-md"
-        >
-          Add Challenge
-        </button>
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="Title"
+            value={newChallenge.title}
+            onChange={(e) =>
+              setNewChallenge({ ...newChallenge, title: e.target.value })
+            }
+            className="w-full px-4 py-2 border rounded-md"
+          />
+          <textarea
+            placeholder="Description"
+            value={newChallenge.description}
+            onChange={(e) =>
+              setNewChallenge({
+                ...newChallenge,
+                description: e.target.value,
+              })
+            }
+            className="w-full px-4 py-2 border rounded-md"
+          />
+          <input
+            type="number"
+            placeholder="Points"
+            value={newChallenge.points}
+            onChange={(e) =>
+              setNewChallenge({ ...newChallenge, points: +e.target.value })
+            }
+            className="w-full px-4 py-2 border rounded-md"
+          />
+          <button
+            onClick={handleAddChallenge}
+            className="bg-green-500 text-white px-4 py-2 rounded-md"
+          >
+            Add Challenge
+          </button>
+        </div>
       </div>
+
       <div className="bg-white p-4 rounded-lg shadow-md">
         <h3 className="text-lg font-semibold mb-4">Challenges</h3>
         <ul className="space-y-4">

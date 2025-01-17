@@ -1,7 +1,7 @@
 import { setDoc, doc } from "firebase/firestore";
 import { db } from "@/firebase";
 
-const assignRole = async (uid, role) => {
+const assignUserRole = async (uid, role) => {
   try {
     await setDoc(
       doc(db, "users", uid),
@@ -15,4 +15,4 @@ const assignRole = async (uid, role) => {
   }
 };
 
-export { assignRole };
+export { assignUserRole };
