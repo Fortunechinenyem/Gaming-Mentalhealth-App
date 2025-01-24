@@ -5,18 +5,18 @@ import { db } from "@/firebase";
 import Navbar from "@/app/components/Navbar";
 import MoodTracker from "@/app/components/MoodTracker";
 
-export default function MoodPage() {
+export default function MoodPage({ entries }) {
   const { user } = useAuth();
   const [moodHistory, setMoodHistory] = useState([]);
   const [latestMood, setLatestMood] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const history = querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-    createdAt: doc.data().createdAt?.toDate() || new Date(),
-  }));
+  // const history = querySnapshot.docs.map((doc) => ({
+  //   id: doc.id,
+  //   ...doc.data(),
+  //   createdAt: doc.data().createdAt?.toDate() || new Date(),
+  // }));
 
   useEffect(() => {
     const fetchMoodHistory = async () => {
@@ -91,6 +91,15 @@ export default function MoodPage() {
               </div>
             )}
             <MoodTracker />
+
+            <ul>
+              {entries.map((entry) => (
+                <li key={entry.id}>
+                  <p>{entry.content}</p>
+                  <p>{new Date(entry.date).toLocaleDateString()}</p>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {moodHistory.length > 0 && (
@@ -129,4 +138,32 @@ export default function MoodPage() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps() {
+  try {
+    const querySnapshot = await db.collection("moodEntries").get();
+
+    const entries = querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        content: data.content,
+        date: data.date.toDate ? data.date.toDate().toISOString() : data.date, // Serialize date
+      };
+    });
+
+    return {
+      props: {
+        entries,
+      },
+    };
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return {
+      props: {
+        entries: [],
+      },
+    };
+  }
 }
