@@ -2,14 +2,14 @@ import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/firebase";
+// import { doc, getDoc } from "firebase/firestore";
+// import { db } from "@/firebase";
 import Footer from "@/app/components/Footer";
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
-  const [rewards, setRewards] = useState({ points: 0, level: 1, badges: [] });
+  // const [rewards, setRewards] = useState({ points: 0, level: 1, badges: [] });
 
   useEffect(() => {
     if (!loading && !user) {
@@ -33,8 +33,7 @@ export default function Home() {
             Hello, {user.displayName || "User"}!
           </h1>
           <p className="text-lg text-gray-700 mt-2">
-            Your mental health journey starts here. Let's grow, reflect, and
-            thrive together.
+            Your mental health journey starts here.
           </p>
           <button
             onClick={handleLogout}

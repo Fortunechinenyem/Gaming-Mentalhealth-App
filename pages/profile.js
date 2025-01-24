@@ -11,19 +11,16 @@ export default function Profile() {
   const [points, setPoints] = useState(0);
   const [journalPoints, setJournalPoints] = useState(0);
 
-  // Fetch points from the user's journal entries
   const fetchJournalPoints = async () => {
     if (user) {
       const journalCollection = collection(db, "journals", user.uid, "entries");
       const querySnapshot = await getDocs(journalCollection);
 
-      // Assume each journal entry is worth 10 points
       const totalPoints = querySnapshot.size * 10;
       setJournalPoints(totalPoints);
     }
   };
 
-  // Fetch user data and calculate total points
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
@@ -81,7 +78,7 @@ export default function Profile() {
                   <p className="font-semibold text-gray-700">Points:</p>
                   <div className="relative w-full h-4 bg-gray-200 rounded-md mt-2">
                     <div
-                      className="absolute top-0 left-0 h-4 bg-blue-500 rounded-md"
+                      className="absolute top-0 left-0 h-4 bg-blue-500 rounded-md transition-all duration-500"
                       style={{
                         width: `${
                           (totalPoints / (userData.level * 100)) * 100 || 0
@@ -98,18 +95,25 @@ export default function Profile() {
                   <h2 className="text-xl font-semibold text-gray-700">
                     Achievements
                   </h2>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-4 mt-4">
                     {userData.badges?.length > 0 ? (
                       userData.badges.map((badge, index) => (
-                        <span
+                        <div
                           key={index}
-                          className="inline-block px-3 py-1 bg-yellow-200 text-yellow-800 text-sm rounded-full"
+                          className="flex flex-col items-center justify-center w-24 h-24 bg-yellow-100 rounded-lg shadow-md hover:scale-105 transition-transform"
                         >
-                          {badge}
-                        </span>
+                          <div className="w-12 h-12 bg-yellow-300 rounded-full flex items-center justify-center mb-2">
+                            <span className="text-xl text-yellow-800">🏆</span>
+                          </div>
+                          <p className="text-sm text-yellow-800 font-semibold text-center">
+                            {badge}
+                          </p>
+                        </div>
                       ))
                     ) : (
-                      <p className="text-gray-500">No achievements yet.</p>
+                      <p className="text-gray-500">
+                        No achievements yet. Keep going!
+                      </p>
                     )}
                   </div>
                 </div>

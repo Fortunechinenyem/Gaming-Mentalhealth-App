@@ -5,18 +5,12 @@ import { db } from "@/firebase";
 import Navbar from "@/app/components/Navbar";
 import MoodTracker from "@/app/components/MoodTracker";
 
-export default function MoodPage({ entries }) {
+export default function MoodPage({ entries = [] }) {
   const { user } = useAuth();
   const [moodHistory, setMoodHistory] = useState([]);
   const [latestMood, setLatestMood] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  // const history = querySnapshot.docs.map((doc) => ({
-  //   id: doc.id,
-  //   ...doc.data(),
-  //   createdAt: doc.data().createdAt?.toDate() || new Date(),
-  // }));
 
   useEffect(() => {
     const fetchMoodHistory = async () => {
@@ -33,7 +27,9 @@ export default function MoodPage({ entries }) {
               ...doc.data(),
             }));
 
-            setMoodHistory(history.sort((a, b) => b.createdAt - a.createdAt));
+            setMoodHistory(
+              history.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
+            );
             setLatestMood(history[0]?.mood || "");
           } else {
             console.warn("No mood data found for the user.");
@@ -80,7 +76,8 @@ export default function MoodPage({ entries }) {
               How are you feeling today? Track your mood and reflect on your
               journey.
             </p>
-            {latestMood && (
+
+            {latestMood ? (
               <div className="text-center mb-6">
                 <p className="text-xl text-gray-700 mb-2">
                   Your latest mood: <strong>{latestMood}</strong>
@@ -89,20 +86,16 @@ export default function MoodPage({ entries }) {
                   {getEncouragementMessage(latestMood)}
                 </p>
               </div>
+            ) : (
+              <p className="text-center text-gray-500 mb-6">
+                No recent mood entries. How are you feeling today?
+              </p>
             )}
-            <MoodTracker />
 
-            <ul>
-              {entries.map((entry) => (
-                <li key={entry.id}>
-                  <p>{entry.content}</p>
-                  <p>{new Date(entry.date).toLocaleDateString()}</p>
-                </li>
-              ))}
-            </ul>
+            <MoodTracker onMoodSelect={(mood) => setLatestMood(mood)} />
           </div>
 
-          {moodHistory.length > 0 && (
+          {moodHistory.length > 0 ? (
             <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
               <h2 className="text-2xl font-bold text-purple-600 text-center mb-4">
                 Your Mood History
@@ -114,8 +107,9 @@ export default function MoodPage({ entries }) {
                     className="flex justify-between items-center bg-purple-50 p-3 rounded-md shadow-sm"
                   >
                     <span className="text-gray-700">
-                      {entry.createdAt?.toDate().toLocaleDateString() ||
-                        "Unknown Date"}{" "}
+                      {new Date(
+                        entry.createdAt.seconds * 1000
+                      ).toLocaleDateString()}{" "}
                       - {entry.mood}
                     </span>
                     <span
@@ -133,6 +127,10 @@ export default function MoodPage({ entries }) {
                 ))}
               </ul>
             </div>
+          ) : (
+            <p className="text-center text-gray-500 mt-6">
+              No mood history yet. Start tracking today!
+            </p>
           )}
         </div>
       </div>
@@ -142,14 +140,15 @@ export default function MoodPage({ entries }) {
 
 export async function getServerSideProps() {
   try {
-    const querySnapshot = await db.collection("moodEntries").get();
+    const moodsRef = collection(db, "moodEntries");
+    const querySnapshot = await getDocs(moodsRef);
 
     const entries = querySnapshot.docs.map((doc) => {
       const data = doc.data();
       return {
         id: doc.id,
-        content: data.content,
-        date: data.date.toDate ? data.date.toDate().toISOString() : data.date, // Serialize date
+        content: data.content || "",
+        date: data.date?.toDate().toISOString() || new Date().toISOString(),
       };
     });
 
