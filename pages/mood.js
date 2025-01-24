@@ -12,6 +12,12 @@ export default function MoodPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const history = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+    createdAt: doc.data().createdAt?.toDate() || new Date(),
+  }));
+
   useEffect(() => {
     const fetchMoodHistory = async () => {
       if (user) {
@@ -27,7 +33,7 @@ export default function MoodPage() {
               ...doc.data(),
             }));
 
-            setMoodHistory(history.sort((a, b) => b.createdAt - a.createdAt)); // Sort by most recent
+            setMoodHistory(history.sort((a, b) => b.createdAt - a.createdAt));
             setLatestMood(history[0]?.mood || "");
           } else {
             console.warn("No mood data found for the user.");

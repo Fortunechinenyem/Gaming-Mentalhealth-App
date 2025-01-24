@@ -21,7 +21,7 @@ export default function JournalPage() {
         return {
           id: doc.id,
           content: data.content,
-          date: data.date.toDate ? data.date.toDate() : new Date(data.date), // Handle both Firestore Timestamps and ISO strings
+          date: data.date.toDate ? data.date.toDate() : new Date(data.date),
         };
       });
 

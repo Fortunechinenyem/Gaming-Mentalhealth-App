@@ -17,8 +17,8 @@ export default function DailyChallenges() {
         const challengesData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
+          completed: doc.data().completed || false, // Ensure default value
         }));
-        console.log("Fetched Challenges: ", challengesData);
         setChallenges(challengesData);
       } catch (err) {
         setError("Failed to fetch challenges.");
