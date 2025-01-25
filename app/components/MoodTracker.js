@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  doc,
-  updateDoc,
-  increment,
-  arrayUnion,
-  setDoc,
-} from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 
@@ -22,31 +16,26 @@ export default function MoodTracker() {
   const [message, setMessage] = useState("");
   const { user } = useAuth();
 
-  const handleSaveMood = async (mood, points) => {
-    if (!user) return setMessage("You need to be logged in to save your mood.");
+  const handleSaveMood = async (emoji, points) => {
+    if (!user || !user.uid) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    const moodData = {
+      mood: emoji,
+      points: points,
+      userId: user.uid,
+      createdAt: new Date(),
+    };
 
     try {
-      const moodRef = doc(db, "moods", user.uid);
-
-      await setDoc(
-        moodRef,
-        {
-          history: arrayUnion({
-            mood: mood,
-            date: new Date().toISOString(),
-          }),
-        },
-        { merge: true }
-      );
-
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { points: increment(points) });
-
-      setSelectedMood(mood);
-      setMessage(`Mood saved successfully! You earned ${points} points!`);
-    } catch (err) {
-      console.error("Error saving mood:", err.message);
-      setMessage("Error saving mood. Please try again.");
+      await addDoc(collection(db, "users", user.uid, "moods"), moodData);
+      setMessage("Mood saved successfully!");
+      console.log("Mood saved successfully");
+    } catch (error) {
+      setMessage(`Error saving mood: ${error.message}`);
+      console.error("Error saving mood:", error.message);
     }
   };
 
@@ -57,7 +46,10 @@ export default function MoodTracker() {
         {moods.map(({ emoji, points }) => (
           <button
             key={emoji}
-            onClick={() => handleSaveMood(emoji, points)}
+            onClick={() => {
+              setSelectedMood(emoji);
+              handleSaveMood(emoji, points);
+            }}
             className={`text-3xl transition-transform ${
               selectedMood === emoji
                 ? "scale-125 text-blue-500 bg-gray-200 p-2 rounded-md"
