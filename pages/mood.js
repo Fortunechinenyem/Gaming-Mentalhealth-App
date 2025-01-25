@@ -133,6 +133,7 @@ export default function MoodPage({ entries = [] }) {
 
   useEffect(() => {
     const fetchMoodHistory = async () => {
+      setLoading(true); // Set loading to true before starting fetch
       try {
         console.log("Fetching moods for user:", user?.uid);
 
@@ -150,10 +151,15 @@ export default function MoodPage({ entries = [] }) {
         setMoodHistory(moods);
       } catch (error) {
         console.error("Error fetching mood history:", error.message);
+        setError("Failed to fetch mood history. Please try again.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchMoodHistory();
+    if (user?.uid) {
+      fetchMoodHistory();
+    }
   }, [user]);
 
   const getEncouragementMessage = (mood) => {
