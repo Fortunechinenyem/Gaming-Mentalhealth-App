@@ -58,7 +58,7 @@ export default function MoodPage() {
       </div>
       <div className="min-h-screen bg-gradient-to-b from-purple-100 to-purple-50 p-6">
         <div className="max-w-3xl mx-auto">
-          <div className="bg-white shadow-lg rounded-lg p-6">
+          <div className="bg-white  text-center shadow-lg rounded-lg p-6">
             <h1 className="text-3xl font-bold text-purple-600 text-center mb-4">
               Hello, {user?.displayName || "User"}! 😊
             </h1>
