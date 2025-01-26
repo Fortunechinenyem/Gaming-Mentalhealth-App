@@ -11,7 +11,7 @@ const moods = [
   { emoji: "😢", points: -10 },
 ];
 
-export default function MoodTracker() {
+export default function MoodTracker({ onMoodSaved }) {
   const [selectedMood, setSelectedMood] = useState(null);
   const [message, setMessage] = useState("");
   const { user } = useAuth();
@@ -33,7 +33,9 @@ export default function MoodTracker() {
     try {
       await addDoc(collection(db, "users", user.uid, "moods"), moodData);
       setMessage("Mood saved successfully!");
-      console.log("Mood saved successfully");
+      setSelectedMood(emoji);
+
+      onMoodSaved({ mood: emoji, points, date: new Date().toISOString() });
     } catch (error) {
       setMessage(`Error saving mood: ${error.message}`);
       console.error("Error saving mood:", error.message);

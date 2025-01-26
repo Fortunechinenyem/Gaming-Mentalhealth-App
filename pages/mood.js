@@ -34,22 +34,15 @@ export default function MoodPage() {
   }, [user]);
 
   const getEncouragementMessage = (mood) => {
-    const moodDetails = {
-      happy: {
-        message: "Keep smiling! 🌟 You're doing amazing!",
-      },
-      sad: {
-        message: "It's okay to feel sad. Tomorrow is a new day! 🌈",
-      },
-      neutral: {
-        message: "You're doing great! Stay balanced. 🧘‍♀️",
-      },
-      angry: {
-        message: "Take a deep breath. You’ve got this! 💪",
-      },
+    const moodMessages = {
+      "😃": "Keep smiling! 🌟 You're doing amazing!",
+      "🙂": "Stay positive! 🌻 You’re doing great.",
+      "😐": "You're doing great! Stay balanced. 🧘‍♀️",
+      "☹️": "It's okay to feel sad. Tomorrow is a new day! 🌈",
+      "😢": "Take care of yourself. Brighter days are ahead! 🌞",
     };
 
-    return moodDetails[mood]?.message || "How are you feeling today?";
+    return moodMessages[mood] || "How are you feeling today?";
   };
 
   return (
@@ -83,13 +76,18 @@ export default function MoodPage() {
                 </p>
               </div>
             )}
-            <MoodTracker />
+            <MoodTracker
+              onMoodSaved={(newMood) => {
+                setLatestMood(newMood.mood);
+                setMoodHistory((prevHistory) => [...prevHistory, newMood]);
+              }}
+            />
           </div>
 
           {moodHistory.length > 0 && (
             <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
               <h2 className="text-2xl font-bold text-purple-600 text-center mb-4">
-                Your Mood History 📊
+                Your Mood History
               </h2>
               <ul className="space-y-2">
                 {moodHistory.map((entry, index) => (
