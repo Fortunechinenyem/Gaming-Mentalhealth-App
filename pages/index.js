@@ -85,6 +85,17 @@ export default function Home() {
             you drive, not where you're going." – Noam Shpancer
           </p>
         </section>
+        <section className="mt-8 bg-gray-100 rounded-lg p-6">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            Coming Soon!
+          </h2>
+          <ul className="space-y-2 text-gray-600">
+            <li> Mindfulness Sessions</li>
+            <li> Personalized Goal Setting</li>
+            <li>Peer Support Groups</li>
+            <li> Advanced Analytics for Mood Patterns</li>
+          </ul>
+        </section>
 
         <button
           onClick={handleLogout}

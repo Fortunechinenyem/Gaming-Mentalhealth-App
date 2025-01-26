@@ -5,6 +5,14 @@ import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/app/components/Navbar";
 import Image from "next/image";
 import { Hero } from "@/public/images";
+// import {
+//   LineChart,
+//   Line,
+//   XAxis,
+//   YAxis,
+//   Tooltip,
+//   CartesianGrid,
+// } from "recharts";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -12,6 +20,13 @@ export default function Profile() {
   const [greeting, setGreeting] = useState("Hello!");
   const [points, setPoints] = useState(0);
   const [journalPoints, setJournalPoints] = useState(0);
+  // const data = [
+  //   { day: "Mon", points: 20 },
+  //   { day: "Tue", points: 40 },
+  //   { day: "Wed", points: 60 },
+  //   { day: "Thu", points: 80 },
+  //   { day: "Fri", points: 100 },
+  // ];
 
   const fetchJournalPoints = async () => {
     if (user) {
@@ -52,6 +67,23 @@ export default function Profile() {
   }, [user]);
 
   const totalPoints = points + journalPoints;
+  const nextLevelPoints = userData ? userData.level * 100 : 100;
+  const progressPercentage = Math.min(
+    (totalPoints / nextLevelPoints) * 100,
+    100
+  );
+
+  const getEncouragementMessage = () => {
+    if (progressPercentage >= 100) {
+      return "Congratulations!  You’ve leveled up! Keep pushing for more achievements!";
+    } else if (progressPercentage >= 75) {
+      return "You're almost there! Keep up the amazing work! ";
+    } else if (progressPercentage >= 50) {
+      return "Great progress! You're halfway to the next level! ";
+    } else {
+      return "Keep going! Every step counts! ";
+    }
+  };
 
   if (!user) return <p>Please log in to view your profile.</p>;
 
@@ -89,18 +121,19 @@ export default function Profile() {
               <div className="space-y-4">
                 <div>
                   <p className="font-semibold text-gray-700">Points:</p>
-                  <div className="relative w-full h-4 bg-gray-200 rounded-md mt-2">
+                  <div className="relative w-full h-6 bg-gray-200 rounded-md mt-2">
                     <div
-                      className="absolute top-0 left-0 h-4 bg-blue-500 rounded-md transition-all duration-500"
+                      className="absolute top-0 left-0 h-6 bg-gradient-to-r from-blue-500 to-green-500 rounded-md transition-all duration-500"
                       style={{
-                        width: `${
-                          (totalPoints / (userData.level * 100)) * 100 || 0
-                        }%`,
+                        width: `${progressPercentage}%`,
                       }}
                     ></div>
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
-                    {totalPoints} / {userData.level * 100} points to next level
+                    {totalPoints} / {nextLevelPoints} points to next level
+                  </p>
+                  <p className="text-sm text-blue-700 mt-1">
+                    {getEncouragementMessage()}
                   </p>
                 </div>
 
@@ -136,6 +169,23 @@ export default function Profile() {
             <p className="text-gray-500 text-center">Loading user data...</p>
           )}
         </div>
+        {/* <section className="mt-12 bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-semibold text-blue-500 mb-4">
+            Progress Chart
+          </h2>
+          <LineChart width={400} height={200} data={data}>
+            <XAxis dataKey="day" />
+            <YAxis />
+            <CartesianGrid stroke="#f5f5f5" />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="points"
+              stroke="#8884d8"
+              strokeWidth={2}
+            />
+          </LineChart>
+        </section> */}
       </div>
     </div>
   );
