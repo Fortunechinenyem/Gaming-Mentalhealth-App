@@ -29,7 +29,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-300 p-6">
       <div
         className="relative bg-cover bg-center h-[400px]"
-        style={{ backgroundImage: "url(/images/pix1.jpg)" }}
+        style={{ backgroundImage: "url(/images/pix4.jpg)" }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white">
           <h1 className="text-3xl font-bold text-white">

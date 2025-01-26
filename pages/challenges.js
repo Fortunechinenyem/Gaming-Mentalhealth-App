@@ -5,7 +5,7 @@ import Navbar from "@/app/components/Navbar";
 import { db } from "@/firebase";
 import { getAuth } from "firebase/auth";
 import { increment } from "firebase/firestore";
-import { Hero3 } from "@/public/images";
+import { Hero5 } from "@/public/images";
 import Image from "next/image";
 
 export default function DailyChallenges() {
@@ -59,7 +59,7 @@ export default function DailyChallenges() {
       <Navbar />
       <div>
         <Image
-          src={Hero3}
+          src={Hero5}
           alt="Hero Image"
           className="w-full h-full object-cover"
           priority
