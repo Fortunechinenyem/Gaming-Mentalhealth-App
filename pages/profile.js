@@ -3,6 +3,8 @@ import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/app/components/Navbar";
+import Image from "next/image";
+import { Hero } from "@/public/images";
 
 export default function Profile() {
   const { user } = useAuth();
@@ -56,11 +58,22 @@ export default function Profile() {
   return (
     <div>
       <Navbar />
+      <div>
+        <Image
+          src={Hero}
+          alt="Hero Image"
+          className="w-full h-full object-cover"
+          priority
+        />
+      </div>
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-6">
         <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-3xl font-bold text-blue-600 mb-4 text-center">
             {greeting} {user.displayName || "User"}!
           </h1>
+          <p className="text-lg md:text-xl mb-6">
+            Track your progress, earn points, and celebrate achievements!
+          </p>
           {userData ? (
             <div className="space-y-6">
               <div className="text-lg text-gray-700">

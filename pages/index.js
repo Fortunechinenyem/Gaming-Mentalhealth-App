@@ -27,22 +27,17 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-300 p-6">
-      <div className="max-w-4xl mx-auto">
-        <header className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600">
+      <div
+        className="relative bg-cover bg-center h-[400px]"
+        style={{ backgroundImage: "url(/images/pix1.jpg)" }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-center text-white">
+          <h1 className="text-3xl font-bold text-white">
             Hello, {user.displayName || "User"}!
           </h1>
-          <p className="text-lg text-gray-700 mt-2">
-            Your mental health journey starts here.
-          </p>
-          <button
-            onClick={handleLogout}
-            className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          >
-            Logout
-          </button>
-        </header>
-
+        </div>
+      </div>
+      <div className="max-w-4xl text-center mx-auto">
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-9">
           <div className="bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
             <h2 className="text-xl font-semibold text-blue-500 mb-2">
@@ -90,6 +85,13 @@ export default function Home() {
             you drive, not where you're going." – Noam Shpancer
           </p>
         </section>
+
+        <button
+          onClick={handleLogout}
+          className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
       </div>
       <Footer />
     </div>

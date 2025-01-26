@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import Navbar from "@/app/components/Navbar";
+import Image from "next/image";
+import { Hero2 } from "@/public/images";
 
 export default function MoodPage() {
   const { user } = useAuth();
@@ -53,6 +55,14 @@ export default function MoodPage() {
   return (
     <div>
       <Navbar />
+      <div>
+        <Image
+          src={Hero2}
+          alt="Hero Image"
+          className="w-full h-full object-cover"
+          priority
+        />
+      </div>
       <div className="min-h-screen bg-gradient-to-b from-purple-100 to-purple-50 p-6">
         <div className="max-w-3xl mx-auto">
           <div className="bg-white shadow-lg rounded-lg p-6">

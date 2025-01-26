@@ -5,6 +5,8 @@ import Navbar from "@/app/components/Navbar";
 import { db } from "@/firebase";
 import { getAuth } from "firebase/auth";
 import { increment } from "firebase/firestore";
+import { Hero3 } from "@/public/images";
+import Image from "next/image";
 
 export default function DailyChallenges() {
   const [challenges, setChallenges] = useState([]);
@@ -17,7 +19,7 @@ export default function DailyChallenges() {
         const challengesData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-          completed: doc.data().completed || false, // Ensure default value
+          completed: false,
         }));
         setChallenges(challengesData);
       } catch (err) {
@@ -35,9 +37,9 @@ export default function DailyChallenges() {
 
       const userId = getAuth().currentUser?.uid;
       if (!userId) {
-        setError("User is not authenticated.");
-        return;
+        throw new Error("User is not authenticated.");
       }
+
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, { points: increment(points) });
 
@@ -47,13 +49,22 @@ export default function DailyChallenges() {
         )
       );
     } catch (err) {
-      setError("Failed to mark as completed.");
+      console.error("Error marking challenge as completed:", err.message);
+      setError(err.message);
     }
   };
 
   return (
     <div>
       <Navbar />
+      <div>
+        <Image
+          src={Hero3}
+          alt="Hero Image"
+          className="w-full h-full object-cover"
+          priority
+        />
+      </div>
       <div className="bg-green-50 p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-bold text-green-600 mb-4">
           Daily Challenges

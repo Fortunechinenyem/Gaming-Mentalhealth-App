@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function ChallengeCard({ challenge, onComplete }) {
-  const [completed, setCompleted] = useState(challenge.completed);
+  const { id, title, description, points, completed } = challenge;
+  // const [completed, setCompleted] = useState(challenge.completed);
   const { user } = useAuth();
 
   const handleComplete = async () => {
@@ -23,13 +24,18 @@ export default function ChallengeCard({ challenge, onComplete }) {
         <div>
           <h3 className="font-bold">{challenge.title}</h3>
           <p>{challenge.description}</p>
+          <p className="text-gray-700 font-semibold mt-2">Points: {points}</p>
         </div>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-          onClick={() => onComplete(challenge.id, challenge.points)}
-          disabled={challenge.completed}
+          onClick={() => onComplete(id, points)}
+          disabled={completed}
+          className={`mt-4 px-4 py-2 rounded-lg font-medium transition ${
+            completed
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-green-500 text-white hover:bg-green-600"
+          }`}
         >
-          {challenge.completed ? "Completed" : "Complete"}
+          {completed ? "Completed" : "Mark as Complete"}
         </button>
       </li>
     </div>
