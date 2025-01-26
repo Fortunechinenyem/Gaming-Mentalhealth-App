@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useAuth } from "@/context/AuthContext";
 
@@ -19,14 +19,15 @@ export default function MoodTracker() {
   const handleSaveMood = async (emoji, points) => {
     if (!user || !user.uid) {
       console.error("User is not authenticated.");
+      setMessage("Please log in to save your mood.");
       return;
     }
 
     const moodData = {
       mood: emoji,
-      points: points,
+      points: points || 0,
       userId: user.uid,
-      createdAt: new Date(),
+      createdAt: serverTimestamp(),
     };
 
     try {
