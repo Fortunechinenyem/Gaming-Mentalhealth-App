@@ -5,18 +5,6 @@ import { useEffect } from "react";
 import Footer from "@/app/components/Footer";
 import Head from "next/head";
 
-const Button = ({ href, label, color, children }) => {
-  return (
-    <Link
-      href={href}
-      className={`bg-${color}-500 text-white px-4 py-2 rounded hover:bg-${color}-600 transition-transform transform hover:scale-105`}
-      aria-label={label}
-    >
-      {children}
-    </Link>
-  );
-};
-
 export default function Home() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
@@ -70,9 +58,9 @@ export default function Home() {
               Write down your thoughts and feelings in a guided format to gain
               clarity.
             </p>
-            <Button href="/journal" label="Start Journaling" color="blue">
-              Start Journaling
-            </Button>
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              <Link href="/journal"> Start Journaling</Link>
+            </button>
           </div>
 
           <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
@@ -83,9 +71,9 @@ export default function Home() {
               Track your daily mood to identify patterns and improve your
               well-being.
             </p>
-            <Button href="/mood" label="Track Mood" color="green">
-              Track Mood
-            </Button>
+            <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+              <Link href="/mood">Track Mood</Link>
+            </button>
           </div>
 
           <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
@@ -95,9 +83,9 @@ export default function Home() {
             <p className="text-gray-600 text-center mb-4">
               Complete fun and uplifting challenges to stay motivated every day.
             </p>
-            <Button href="/challenges" label="View Challenges" color="yellow">
-              View Challenges
-            </Button>
+            <button className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
+              <Link href="/challenges">View Challenges</Link>
+            </button>
           </div>
         </section>
       </div>
